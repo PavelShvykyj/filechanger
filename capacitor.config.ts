@@ -3,7 +3,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'ionic.filechanger',
   appName: 'filechanger',
-  webDir: 'www',
+  webDir: 'www\browser',
   server: {
     androidScheme: 'https'
   }

@@ -1,20 +1,29 @@
-<ion-header [translucent]="true">
+<!-- <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
       Blank
     </ion-title>
   </ion-toolbar>
-</ion-header>
+</ion-header> -->
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
+  <ion-header >
     <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
+      <ion-title size="large">First</ion-title>
+      <ion-buttons slot="start">
+        <ion-button color="medium" router-direction="forward" [routerLink]="['/second']"  >go to second</ion-button>
+      </ion-buttons>
     </ion-toolbar>
   </ion-header>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+    <!-- @if (fakeData){
+    <ion-list>
+    @for (item of fakeData; track $index) {
+      <ion-item> {{item}} </ion-item>
+    }
+  </ion-list>
+  } @else {
+    <ion-title> Still no data </ion-title>
+  } -->
+
 </ion-content>
