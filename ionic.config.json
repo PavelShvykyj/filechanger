@@ -1,0 +1,7 @@
+{
+  "name": "filechanger",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
