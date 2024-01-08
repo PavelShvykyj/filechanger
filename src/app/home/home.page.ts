@@ -3,7 +3,6 @@ import {
   computed,
   effect,
   inject,
-  OnDestroy,
   OnInit,
   signal,
 } from '@angular/core';
@@ -30,16 +29,21 @@ import {
   IonCard,
   IonCardContent,
   IonCardHeader,
-  IonCardTitle
+  IonCardTitle,
+  IonCheckbox,
+  IonAlert,
 } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FireAuthService } from '../fire.auth.service';
 import { FireStorageService } from '../fire.storage.service';
 import { ListResult, StorageReference } from 'firebase/storage';
-import { cloudDownloadOutline, folderOutline, folderOpenOutline } from 'ionicons/icons'
-import { addIcons } from 'ionicons'
-
+import {
+  cloudDownloadOutline,
+  folderOutline,
+  folderOpenOutline,
+} from 'ionicons/icons';
+import { addIcons } from 'ionicons';
 
 
 @Component({
@@ -71,6 +75,8 @@ import { addIcons } from 'ionicons'
     IonCardContent,
     IonCardHeader,
     IonCardTitle,
+    IonCheckbox,
+    IonAlert,
     CommonModule,
     RouterModule,
   ],
@@ -81,7 +87,6 @@ export class HomePage implements OnInit {
   selectedFilial = signal<StorageReference | null | undefined>(null);
   parentFolder = signal<StorageReference | null | undefined>(null);
   router = inject(Router);
-
   public filials = computed(() => {
     return this.storage.rootFolders().map((item) => {
       return { ref: item, name: item.name };
@@ -90,27 +95,39 @@ export class HomePage implements OnInit {
   public filialFiles = signal<ListResult | null>(null);
   public isModalOpen = false;
   public loadUrl = signal<string | null>(null);
+  public confirmDeleButtons = [
+    {
+      text: 'Cancel',
+      role: 'cancel',
+      handler: () => {
+      },
+    },
+    {
+      text: 'OK',
+      role: 'confirm',
+      handler: () => {
+        this.DeleteSelectedFiles();
+      },
+    },
+  ];
+
+  itemFilesSelected: StorageReference[] = [];
 
   constructor() {
-    addIcons({ cloudDownloadOutline, folderOutline, folderOpenOutline});
+    addIcons({ cloudDownloadOutline, folderOutline, folderOpenOutline });
 
+    effect(
+      () => {
+        const filial = this.selectedFilial();
+        this.parentFolder.set(filial);
+      },
+      { allowSignalWrites: true }
+    );
 
-    effect(() => {
-      const filial = this.selectedFilial();
-      this.parentFolder.set(filial);
-    }, {allowSignalWrites: true});
-
-    effect(() => {
-
-      const folder = this.parentFolder();
-      if (!!folder) {
-        this.storage.getFromPath(folder.name).then(list => {
-          console.log('getFromPath', list);
-
-          this.filialFiles.set(list);
-        });
-      }
-    }, {allowSignalWrites: true});
+    effect(
+      ()=> {this.refresh()},
+      { allowSignalWrites: true }
+    );
   }
 
   ngOnInit(): void {
@@ -131,20 +148,54 @@ export class HomePage implements OnInit {
 
   OnFileItemClick(itemFile: StorageReference) {
     this.loadUrl.set(null);
-    this.storage.getDownloadUrl(itemFile).then(url => {
+    this.storage.getDownloadUrl(itemFile).then((url) => {
       this.loadUrl.set(url);
-    })
+    });
   }
 
   OnParentFolderClick() {
     const currentParent = this.parentFolder();
     if (!!currentParent && currentParent.name !== this.selectedFilial()?.name) {
-      this.parentFolder.set(this.parentFolder()?.parent)
+      this.parentFolder.set(this.parentFolder()?.parent);
     }
   }
 
   SignOut() {
     this.auth.logOut();
     this.router.navigate(['login']);
+  }
+
+  OnItemCheck(itemFile: StorageReference, isCheked: boolean) {
+    if (isCheked) {
+      this.itemFilesSelected = this.itemFilesSelected.filter(
+        (el) => el !== itemFile
+      );
+    } else {
+      this.itemFilesSelected.push(itemFile);
+    }
+  }
+
+  isFileChecked(itemFile: StorageReference) {
+    return this.itemFilesSelected.includes(itemFile);
+  }
+
+  DeleteSelectedFiles() {
+    if (this.itemFilesSelected.length === 0) {
+      return;
+    }
+
+    this.storage.deleteFiles(this.itemFilesSelected).finally(() => {
+      this.itemFilesSelected = [];
+      this.refresh();
+    });
+  }
+
+  refresh() {
+    const folder = this.parentFolder();
+    if (!!folder) {
+      this.storage.getFromPath(folder.name).then((list) => {
+        this.filialFiles.set(list);
+      });
+    }
   }
 }

@@ -30,11 +30,10 @@
       <ion-header>
         <ion-toolbar>
           <ion-title>
-            @if(selectedFilial(); as filial) {
-              Files from
-              <ion-text color="tertiary"> {{filial?.name}} </ion-text>
+            @if(selectedFilial(); as filial) { Files from
+            <ion-text color="tertiary"> {{filial?.name}} </ion-text>
             } @else {
-              <ion-text > Select filial from list </ion-text>
+            <ion-text> Select filial from list </ion-text>
             }
           </ion-title>
           <ion-avatar
@@ -51,11 +50,13 @@
           </ion-title>
 
           <ion-buttons slot="end">
-            <ion-button color="medium" (click)="SignOut()"> Sign out </ion-button>
+            <ion-button color="medium" (click)="SignOut()">
+              Sign out
+            </ion-button>
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
-      <ion-content class="ion-padding">
+      <ion-content class="ion-padding" [fullscreen]="true">
         @if (filialFiles(); as items) {
         <ion-list>
           <ion-item type="button" button (click)="OnParentFolderClick()">
@@ -81,11 +82,32 @@
             </ion-note>
           </ion-item>
           } @for (itemFile of items?.items; track $index) {
-          <ion-item type="button" button (click)="OnFileItemClick(itemFile)">
-            <!-- <ion-item type="download" download [href]="itemFile.toString()"> -->
-            <ion-icon slot="start" name="cloud-download-outline"></ion-icon>
-            <ion-label> {{itemFile.name}}</ion-label>
-            <ion-note slot="start" color="medium"> click to download </ion-note>
+          <ion-item button>
+            <ion-icon
+              type="button"
+              button
+              (click)="OnFileItemClick(itemFile)"
+              slot="start"
+              name="cloud-download-outline"
+            ></ion-icon>
+            <ion-label type="button" button (click)="OnFileItemClick(itemFile)">
+              {{itemFile.name}}</ion-label
+            >
+            <ion-note
+              type="button"
+              button
+              (click)="OnFileItemClick(itemFile)"
+              slot="start"
+              color="medium"
+            >
+              click to download
+            </ion-note>
+            <ion-checkbox
+              #el
+              slot="end"
+              [checked]="isFileChecked(itemFile)"
+              (ionChange)="OnItemCheck(itemFile,!el.checked)"
+            ></ion-checkbox>
           </ion-item>
           }
         </ion-list>
@@ -115,6 +137,29 @@
         </ion-modal>
         }
       </ion-content>
+      <ion-footer>
+        <ion-toolbar>
+          <ion-title slot="start">
+            Selected {{ itemFilesSelected.length }} files
+          </ion-title>
+          <ion-buttons slot="end">
+            <ion-button
+              id="confirm-delete-trigger"
+              color="medium"
+
+            >
+              DELETE {{ itemFilesSelected.length }} FILES
+            </ion-button>
+            <ion-alert
+              class="delete-files-alert"
+              trigger="confirm-delete-trigger"
+              header="Confirmation"
+              subHeader="Selected files will be deleted"
+              [buttons]="confirmDeleButtons"
+            ></ion-alert>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-footer>
     </div>
   </ion-split-pane>
 </ion-content>

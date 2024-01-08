@@ -24,3 +24,27 @@
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
+
+
+/* custom global */
+.delete-files-alert button.alert-button.alert-button-role-cancel {
+  background-color: var(--ion-color-warning);
+  color: var(--ion-color-warning-contrast);
+}
+
+.delete-files-alert button.alert-button.alert-button-role-confirm {
+  background-color: var(--ion-color-warning);
+  color: var(--ion-color-warning-contrast);
+}
+
+.delete-files-alert .alert-wrapper .alert-head .alert-title {
+  color: var(--ion-color-warning-contrast);
+}
+
+.delete-files-alert .alert-wrapper .alert-head .alert-sub-title {
+  color: var(--ion-color-warning-contrast);
+}
+
+ion-alert.delete-files-alert {
+  --background: var(--ion-color-warning);
+}
