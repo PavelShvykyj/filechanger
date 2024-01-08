@@ -33,7 +33,7 @@ import {
   IonCardTitle
 } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { FireAuthService } from '../fire.auth.service';
 import { FireStorageService } from '../fire.storage.service';
 import { ListResult, StorageReference } from 'firebase/storage';
@@ -80,6 +80,7 @@ export class HomePage implements OnInit {
   storage = inject(FireStorageService);
   selectedFilial = signal<StorageReference | null | undefined>(null);
   parentFolder = signal<StorageReference | null | undefined>(null);
+  router = inject(Router);
 
   public filials = computed(() => {
     return this.storage.rootFolders().map((item) => {
@@ -140,5 +141,10 @@ export class HomePage implements OnInit {
     if (!!currentParent && currentParent.name !== this.selectedFilial()?.name) {
       this.parentFolder.set(this.parentFolder()?.parent)
     }
+  }
+
+  SignOut() {
+    this.auth.logOut();
+    this.router.navigate(['login']);
   }
 }
