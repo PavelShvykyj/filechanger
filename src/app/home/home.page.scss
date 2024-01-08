@@ -25,3 +25,13 @@
 #container a {
   text-decoration: none;
 }
+ion-modal {
+  --max-height: 120px;
+  --height: auto;
+  --background: #2dd36f;
+  --border-radius: 4px;
+}
+
+ion-button.no-shadow {
+  --box-shadow: 0 0 0 0;
+}

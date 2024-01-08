@@ -26,6 +26,7 @@ export class NotificationService {
     this.show(options);
   }
   public NotificateError(content: string) {
+    console.error(content);
     const options: ToastOptions = {
       ...this.sharedOptions,
       color: "danger",

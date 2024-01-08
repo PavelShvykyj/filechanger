@@ -12,25 +12,13 @@ export class FireService  {
   private _app = initializeApp(environment.firebase);
   get app() {
     return this._app
-
   }
-  //private db = getDatabase(this.app);
-
-  private storage = getStorage(this.app,environment.firebase.storageBucket);
-
-  //public fakedata$: Observable<any>;
-
-
 
   constructor() {
-    //this.fakedata$ = this.CreateSourse('reports');
-
-
   }
 
   CreateSourse(path: string) {
-    const pathref = ref(this.storage);
-    listAll(pathref).then(res => {list(ref(this.storage, res.prefixes[0].fullPath))})
+
 
 
   }

@@ -1,29 +1,98 @@
-<!-- <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
-  </ion-toolbar>
-</ion-header> -->
-
 <ion-content [fullscreen]="true">
-  <ion-header >
-    <ion-toolbar>
-      <ion-title size="large">First</ion-title>
-      <ion-buttons slot="start">
-        <ion-button color="medium" router-direction="forward" [routerLink]="['/second']"  >go to second</ion-button>
-      </ion-buttons>
-    </ion-toolbar>
-  </ion-header>
 
-    <!-- @if (fakeData){
-    <ion-list>
-    @for (item of fakeData; track $index) {
-      <ion-item> {{item}} </ion-item>
-    }
-  </ion-list>
-  } @else {
-    <ion-title> Still no data </ion-title>
-  } -->
+  <ion-split-pane when="md" contentId="main">
+    <ion-menu contentId="main">
+      <ion-header>
+        <ion-toolbar color="medium">
+          <ion-title>Filials</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <ion-list>
+          @for (filial of filials(); track $index) {
+          <ion-item type="button" button (click)="OnFilialClick(filial.ref)">
+            <ion-label [color]="filial.ref === selectedFilial() ? 'tertiary' : 'dark'"> {{filial.name}}</ion-label>
+          </ion-item>
+          } @empty {
+          <ion-item>
+            <ion-spinner name="dots" slot="start"></ion-spinner>
+            <ion-label>getting data</ion-label>
+          </ion-item>
+          }
+        </ion-list>
+      </ion-content>
+    </ion-menu>
 
+    <div class="ion-page" id="main">
+      <ion-header>
+        <ion-toolbar>
+          <ion-title
+            >Files from
+            <ion-text color="tertiary"> {{selectedFilial()?.name}} </ion-text>
+          </ion-title>
+          <ion-avatar
+            style="height: 54px; width: 54px"
+            class="ion-margin-start ion-margin-end"
+            slot="start"
+          >
+            <img alt="Logo" src="assets/icon/crazy.jpeg" />
+          </ion-avatar>
+
+          <ion-title slot="end">
+            Loged in as <ion-note color="medium"> {{ auth.User?.user?.email}} </ion-note>
+          </ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        @if (filialFiles(); as items) {
+        <ion-list>
+          <ion-item type="button" button (click)="OnParentFolderClick()">
+            <ion-icon slot="start" color="tertiary" name="folder-open-outline"></ion-icon>
+            <ion-label color="tertiary" > {{ parentFolder()?.name }}</ion-label>
+            <ion-note color="tertiary" slot="start"> click to go up </ion-note>
+          </ion-item>
+
+
+          @for (itemFolder of items?.prefixes; track $index) {
+          <ion-item type="button" button (click)="OnFolderItemClick(itemFolder)">
+            <ion-icon slot="start" name="folder-outline"></ion-icon>
+            <ion-label> {{itemFolder.name}}</ion-label>
+            <ion-note slot="start" color="medium"> click to see content </ion-note>
+          </ion-item>
+          }
+
+          @for (itemFile of items?.items; track $index) {
+            <ion-item type="button" button (click)="OnFileItemClick(itemFile)">
+            <!-- <ion-item type="download" download [href]="itemFile.toString()"> -->
+              <ion-icon slot="start" name="cloud-download-outline"></ion-icon>
+              <ion-label> {{itemFile.name}}</ion-label>
+              <ion-note slot="start" color="medium"> click to download </ion-note>
+            </ion-item>
+            }
+
+        </ion-list>
+
+
+        <ion-modal  [isOpen]="!!loadUrl()">
+          <ng-template>
+
+              <ion-card class="ion-no-margin" color="success">
+                <ion-card-header>
+                  <ion-card-title>Your file is ready</ion-card-title>
+
+                </ion-card-header>
+
+                <ion-button  class="no-shadow ion-float-right ion-margin-start ion-margin-end" color="success"  (click)="loadUrl.set(null)">Close</ion-button>
+                <ion-button  class="no-shadow ion-float-right " color="success"  [href]="loadUrl()" download=""> Get file </ion-button>
+
+              </ion-card>
+
+          </ng-template>
+        </ion-modal>
+      }
+
+
+      </ion-content>
+    </div>
+  </ion-split-pane>
 </ion-content>

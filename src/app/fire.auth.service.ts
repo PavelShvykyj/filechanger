@@ -36,6 +36,11 @@ export class FireAuthService {
       return 'loggedout';
     }
   );
+
+  get User() : UserCredential | null {
+    return this.credentional();
+  }
+
   private isPending: WritableSignal<boolean> = signal(false);
 
   constructor() {}
