@@ -4,13 +4,21 @@ import {
   StorageReference,
   getDownloadURL,
   getStorage,
+  getMetadata,
+  updateMetadata,
   list,
   listAll,
   ref,
   deleteObject,
+  FullMetadata,
 } from 'firebase/storage';
 import { environment } from 'src/environments/environment';
 import { NotificationService } from './notification.service';
+
+export interface IListData {
+  prefixes: StorageReference[],
+  items: FullMetadata[]
+}
 
 @Injectable({
   providedIn: 'root',
@@ -41,11 +49,26 @@ export class FireStorageService {
       });
   }
 
-  getFromPath(path: string) {
+  getFromPath(path: string): Promise<IListData | null> {
     const pathref = ref(this.storage, path);
-    return list(pathref)
+    return list(pathref, {maxResults: 10})
       .then((res) => {
-        return res;
+        const taskArray: Promise<FullMetadata>[] = [];
+        res.items.forEach(ref=>{
+          taskArray.push(getMetadata(ref));
+        })
+
+        return Promise.all(taskArray).then(metaArray=> {
+          return {
+            prefixes: res.prefixes,
+            items: metaArray
+
+          }
+
+
+        })
+
+
       })
       .catch((error) => {
         this.notificator.NotificateError(
@@ -66,6 +89,15 @@ export class FireStorageService {
         );
         return null;
       });
+  }
+
+  getMetatadaByRef(ref: StorageReference) {
+    return getMetadata(ref)
+  }
+
+  setMetadaByRef(ref: StorageReference, newMetaData:{customMetadata: { [key:string] : string}} ) {
+    updateMetadata(ref,newMetaData);
+
   }
 
   deleteFiles(refs: StorageReference[]) {

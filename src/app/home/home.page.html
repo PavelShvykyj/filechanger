@@ -81,8 +81,10 @@
               click to see content
             </ion-note>
           </ion-item>
-          } @for (itemFile of items?.items; track $index) {
-          <ion-item button>
+          }
+
+          @for (itemFile of items?.items; track $index) {
+          <ion-item button >
             <ion-icon
               type="button"
               button
@@ -90,9 +92,18 @@
               slot="start"
               name="cloud-download-outline"
             ></ion-icon>
-            <ion-label type="button" button (click)="OnFileItemClick(itemFile)">
-              {{itemFile.name}}</ion-label
+            <ion-label [color]="!!itemFile.customMetadata?.['download'] ? 'medium' : 'dark'"  type="button" button (click)="OnFileItemClick(itemFile)">
+               {{itemFile.name}}</ion-label
             >
+            @if (!!itemFile.customMetadata?.['download']) {
+              <ion-note slot="end">
+                (downloaded)
+              </ion-note>
+            }
+
+            <ion-note slot="end">
+              size {{ itemFile.size }}
+            </ion-note>
             <ion-note
               type="button"
               button
@@ -105,10 +116,19 @@
             <ion-checkbox
               #el
               slot="end"
-              [checked]="isFileChecked(itemFile)"
-              (ionChange)="OnItemCheck(itemFile,!el.checked)"
+              [checked]="isFileChecked(itemFile.ref)"
+              (ionChange)="OnItemCheck(!el.checked,itemFile.ref)"
             ></ion-checkbox>
           </ion-item>
+          } @empty {
+
+              <ion-item >
+                <ion-spinner name="dots" slot="start"></ion-spinner>
+                <ion-label>no files</ion-label>
+
+              </ion-item>
+
+
           }
         </ion-list>
 
@@ -125,6 +145,7 @@
                 >Close</ion-button
               >
               <ion-button
+                (click)="OnDownloadClick()"
                 class="no-shadow ion-float-right"
                 color="success"
                 [href]="loadUrl()"

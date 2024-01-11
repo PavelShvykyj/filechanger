@@ -36,14 +36,15 @@ import {
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FireAuthService } from '../fire.auth.service';
-import { FireStorageService } from '../fire.storage.service';
-import { ListResult, StorageReference } from 'firebase/storage';
+import { FireStorageService, IListData } from '../fire.storage.service';
+import { FullMetadata, ListResult, StorageReference } from 'firebase/storage';
 import {
   cloudDownloadOutline,
   folderOutline,
   folderOpenOutline,
 } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
+
 
 
 @Component({
@@ -85,6 +86,7 @@ export class HomePage implements OnInit {
   auth = inject(FireAuthService);
   storage = inject(FireStorageService);
   selectedFilial = signal<StorageReference | null | undefined>(null);
+  selectedFile: FullMetadata | null | undefined = null;
   parentFolder = signal<StorageReference | null | undefined>(null);
   router = inject(Router);
   public filials = computed(() => {
@@ -92,7 +94,7 @@ export class HomePage implements OnInit {
       return { ref: item, name: item.name };
     });
   });
-  public filialFiles = signal<ListResult | null>(null);
+  public filialFiles = signal<IListData | null>(null);
   public isModalOpen = false;
   public loadUrl = signal<string | null>(null);
   public confirmDeleButtons = [
@@ -146,9 +148,10 @@ export class HomePage implements OnInit {
     this.parentFolder.set(itemFolder);
   }
 
-  OnFileItemClick(itemFile: StorageReference) {
+  OnFileItemClick(itemFile: FullMetadata) {
+    this.selectedFile = itemFile;
     this.loadUrl.set(null);
-    this.storage.getDownloadUrl(itemFile).then((url) => {
+    this.storage.getDownloadUrl(itemFile.ref as StorageReference).then((url) => {
       this.loadUrl.set(url);
     });
   }
@@ -165,18 +168,25 @@ export class HomePage implements OnInit {
     this.router.navigate(['login']);
   }
 
-  OnItemCheck(itemFile: StorageReference, isCheked: boolean) {
+  OnItemCheck(isCheked: boolean, itemFile?: StorageReference ) {
     if (isCheked) {
       this.itemFilesSelected = this.itemFilesSelected.filter(
         (el) => el !== itemFile
       );
     } else {
-      this.itemFilesSelected.push(itemFile);
+      this.itemFilesSelected.push(itemFile as StorageReference);
     }
   }
 
-  isFileChecked(itemFile: StorageReference) {
-    return this.itemFilesSelected.includes(itemFile);
+  OnDownloadClick() {
+    (this.selectedFile as FullMetadata).customMetadata = {'download': 'true'};
+    this.storage.setMetadaByRef((this.selectedFile as FullMetadata).ref as StorageReference, {
+      customMetadata: {'download': 'true'}
+    });
+  }
+
+  isFileChecked(itemFile?: StorageReference) {
+    return this.itemFilesSelected.includes(itemFile as StorageReference);
   }
 
   DeleteSelectedFiles() {
