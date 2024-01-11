@@ -12,9 +12,9 @@
 
   <ion-grid>
     <ion-row class="ion-align-items-center ion-justify-content-center">
-      <ion-col size="1"  size-sm="4"></ion-col>
+      <ion-col size="4"></ion-col>
 
-      <ion-col size="10"  size-sm="4">
+      <ion-col size="4">
           <div class="container">
             <ion-input
               color="medium"
@@ -53,13 +53,13 @@
             </ion-input>
           </div>
       </ion-col>
-      <ion-col size="1"  size-sm="4"></ion-col>
+      <ion-col size="4"></ion-col>
     </ion-row>
 
     <ion-row class="ion-align-items-center ion-justify-content-end">
-      <ion-col size="1"  size-sm="4"></ion-col>
+      <ion-col size="4"></ion-col>
 
-      <ion-col class="ion-justify-content-end" size="10"  size-sm="4">
+      <ion-col class="ion-justify-content-end" size="4">
         <ion-item>
           @if(auth.LoggedStatus() === "pending") {
             <ion-spinner name="dots" slot="start"></ion-spinner>
@@ -68,15 +68,13 @@
 
           <ion-button [disabled]="!email.valid || !password.valid"  class="mr-14" size="default" slot="end"  color="medium" (click)="onLoggin()">Submit</ion-button>
         </ion-item>
-        <!-- <ion-button class="ion-float-end"  color="medium">Submit</ion-button> -->
-
       </ion-col>
 
-      <ion-col size="1"  size-sm="4"></ion-col>
+      <ion-col size="4"></ion-col>
     </ion-row>
     <ion-row class="ion-align-items-center ion-justify-content-center">
-      <ion-col size="1"  size-sm="4"></ion-col>
-      <ion-col size="10"  size-sm="4">
+      <ion-col size="4"></ion-col>
+      <ion-col size="4">
         <ion-label
         [ngClass]="{'clickable': email.valid}"
         class="ion-margin-start"
@@ -88,7 +86,7 @@
           <ion-note ion-margin-start>(enter a valid email)</ion-note>
         }
       </ion-col>
-      <ion-col size="1"  size-sm="4"></ion-col>
+      <ion-col size="4"></ion-col>
     </ion-row>
   </ion-grid>
 
