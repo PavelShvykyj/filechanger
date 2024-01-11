@@ -179,6 +179,10 @@ export class HomePage implements OnInit {
   }
 
   OnDownloadClick() {
+    if(!!(this.selectedFile as FullMetadata).customMetadata) {
+      return
+    }
+
     (this.selectedFile as FullMetadata).customMetadata = {'download': 'true'};
     this.storage.setMetadaByRef((this.selectedFile as FullMetadata).ref as StorageReference, {
       customMetadata: {'download': 'true'}
